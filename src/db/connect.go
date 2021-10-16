@@ -33,6 +33,7 @@ func ConnectPg() {
 		panic("failed to connect to database..")
 	}
 
+	fmt.Println("Running the migrations...")
 	DB.AutoMigrate(&Users.User{})
 	fmt.Println("Database connection was successful...")
 
