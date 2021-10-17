@@ -1,4 +1,4 @@
-package db
+package Database
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/models/Users"
+	"github.com/raliqala/safepass_api/src/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -34,7 +34,7 @@ func ConnectPg() {
 	}
 
 	fmt.Println("Running the migrations...")
-	DB.AutoMigrate(&Users.User{})
+	DB.AutoMigrate(&models.User{}, &models.Claims{})
 	fmt.Println("Database connection was successful...")
 
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/db"
+	Database "github.com/raliqala/safepass_api/src/db"
 	"github.com/raliqala/safepass_api/src/routes"
 )
 
@@ -38,7 +38,7 @@ func main() {
 
 	port := config.Config("PORT")
 
-	db.ConnectPg()
+	Database.ConnectPg()
 	conErr := app.Listen(":" + port)
 
 	// connection error
