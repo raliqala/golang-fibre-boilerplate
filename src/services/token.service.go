@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/raliqala/safepass_api/src/config"
-	Database "github.com/raliqala/safepass_api/src/db"
+	"github.com/raliqala/safepass_api/src/database"
 	"github.com/raliqala/safepass_api/src/models"
 
 	"github.com/dgrijalva/jwt-go"
@@ -44,18 +44,18 @@ func GenerateAccessClaims(uuid string) (*models.Claims, string) {
 
 // GenerateRefreshClaims returns refresh_token
 func GenerateRefreshClaims(cl *models.Claims) string {
-	db := Database.DB
-	// result := db.Where(&models.Claims{
-	// 	StandardClaims: jwt.StandardClaims{
-	// 		Issuer: cl.Issuer,
-	// 	},
-	// }).Find(&models.Claims{})
+	db := database.DB
+	result := db.Where(&models.Claims{
+		StandardClaims: jwt.StandardClaims{
+			Issuer: cl.Issuer,
+		},
+	}).Find(&models.Claims{})
 
-	// if result.RowsAffected > 3 {
-	// 	db.Where(&models.Claims{
-	// 		StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
-	// 	}).Delete(&models.Claims{})
-	// }
+	if result.RowsAffected > 3 {
+		db.Where(&models.Claims{
+			StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
+		}).Delete(&models.Claims{})
+	}
 
 	t := time.Now()
 	refreshClaim := &models.Claims{

@@ -6,11 +6,9 @@ import (
 )
 
 func Welcome(c *fiber.Ctx) error {
-	accessToken, refreshToken := services.GenerateTokens("14d1ea63-fb27-4eb8-964c-c49da50939cb")
+	services.GenerateTokens("d7fa0111-7371-41a2-8a3f-55a8c509dd61")
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success":       true,
-		"message":       "All good here!.. 🚀 ",
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"success": true,
+		"message": "All good here!.. 🚀 ",
 	})
 }

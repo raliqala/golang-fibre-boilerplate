@@ -1,10 +1,10 @@
-package welcomeRoute
+package welcome
 
 import (
 	"github.com/gofiber/fiber/v2"
-	WelcomeController "github.com/raliqala/safepass_api/src/controllers"
+	"github.com/raliqala/safepass_api/src/controllers"
 )
 
 func Welcome(router fiber.Router) {
-	router.Get("/", WelcomeController.Welcome)
+	router.Get("/", controllers.Welcome)
 }

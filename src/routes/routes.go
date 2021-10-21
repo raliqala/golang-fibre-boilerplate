@@ -2,10 +2,13 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	WelcomeRoutes "github.com/raliqala/safepass_api/src/routes/welcome"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/raliqala/safepass_api/src/routes/auth"
+	"github.com/raliqala/safepass_api/src/routes/welcome"
 )
 
 func RouteSetup(app *fiber.App) {
-	api := app.Group("/api")
-	WelcomeRoutes.Welcome(api)
+	api := app.Group("/api", logger.New())
+	welcome.Welcome(api)
+	auth.AuthRoutes(api)
 }
