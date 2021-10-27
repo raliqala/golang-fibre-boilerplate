@@ -7,5 +7,7 @@ import (
 
 func AuthRoutes(router fiber.Router) {
 	user := router.Group("/u")
-	user.Post("/", users.SignUp)
+	user.Post("/signup", users.SignUp)
+	user.Post("/signin", users.SignIn)
+	user.Get("/access-token", users.GetAccessToken)
 }

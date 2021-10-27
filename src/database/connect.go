@@ -35,7 +35,7 @@ func ConnectPg() {
 	}
 
 	fmt.Println("Running the migrations...")
-	DB.AutoMigrate(&models.User{}, &models.Claims{}, &models.Author{})
+	DB.AutoMigrate(&models.User{}, &models.Claims{})
 	fmt.Println("Database connection was successful...")
 
 }

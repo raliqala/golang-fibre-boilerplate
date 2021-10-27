@@ -1,13 +1,9 @@
 package models
 
-import "database/sql"
-
 type User struct {
 	Base
-	Email       string `json:"email" gorm:"unique"`
-	Username    string `json:"username" gorm:"unique"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Password    string `json:"password"`
-	ActivatedAt sql.NullTime
+	FirstName string `json:"first_name" validate:"required,ascii,max=128"`
+	LastName  string `json:"last_name" validate:"required,ascii,max=128"`
+	Email     string `json:"email" validate:"required,email,max=255"`
+	Password  string `json:"password" validate:"required,max=255"`
 }

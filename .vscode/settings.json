@@ -1,6 +1,9 @@
 {
   "cSpell.words": [
+    "bcrypt",
     "gofiber",
-    "gorm"
+    "gorm",
+    "signin",
+    "signup"
   ]
 }
