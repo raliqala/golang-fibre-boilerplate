@@ -47,10 +47,26 @@ func SignUp(c *fiber.Ctx) error {
 
 	if createErr := db.Create(&data).Error; createErr != nil {
 		return c.JSON(fiber.Map{
-			"error":   true,
+			"success": false,
 			"general": "Something went wrong, please try again later. 😕",
+			"errMsg":  createErr.Error(),
 		})
 	}
+
+	helpers.SendEmail(helpers.Payload{
+		To:   data.Email,
+		Name: data.FirstName,
+		Cc:   "",
+		HTMLContent: `<html>
+									<head>
+										<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+									</head>
+									<body>
+										<p>This is the <b>Go gopher</b>.</p>
+									</body>
+								</html>`,
+		Subject: "This is a test subject",
+	})
 
 	// setting up the authorization cookies
 	accessToken, refreshToken := services.GenerateTokens(data.UUID.String())
@@ -131,10 +147,10 @@ func GetAccessToken(c *fiber.Ctx) error {
 	if res := db.Where(
 		"expires_at = ? AND issued_at = ? AND issuer = ? AND ID = ?",
 		refreshClaims.ExpiresAt, refreshClaims.IssuedAt, refreshClaims.Issuer, refreshClaims.ID,
-	).First(refreshClaims); res.RowsAffected <= 0 {
+	).First(&models.Claims{}); res.RowsAffected <= 0 {
 		// no such refresh token exist in the database
 		c.ClearCookie("access_token", "refresh_token")
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"success": false,
 		})
 	}
@@ -155,15 +171,39 @@ func GetAccessToken(c *fiber.Ctx) error {
 		})
 	}
 
-	_, accessToken := services.GenerateAccessClaims(refreshClaims.Issuer)
+	if deleteErr := db.Where(
+		"issuer = ? AND ID = ?",
+		refreshClaims.Issuer, refreshClaims.ID,
+	).Delete(refreshClaims).Error; deleteErr != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"error":   "Sorry could not delete claims. 😕",
+		})
+	}
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "access_token",
-		Value:    accessToken,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HTTPOnly: true,
-		Secure:   true,
+	accessToken, refreshToken := services.GenerateTokens(refreshClaims.Issuer)
+	accessCookie, refreshCookie := services.GetAuthCookies(accessToken, refreshToken)
+	c.Cookie(accessCookie)
+	c.Cookie(refreshCookie)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success":       true,
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
 	})
+}
 
-	return c.JSON(fiber.Map{"access_token": accessToken})
+func GetProfile(c *fiber.Ctx) error {
+	db := database.DB
+	id := c.Locals("id")
+
+	u := new(models.User)
+	if res := db.Where("uuid = ?", id).First(&u); res.RowsAffected <= 0 {
+		return c.JSON(fiber.Map{"error": true, "general": "Cannot find the User"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"data":    u,
+	})
 }

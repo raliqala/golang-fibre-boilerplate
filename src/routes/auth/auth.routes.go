@@ -11,3 +11,7 @@ func AuthRoutes(router fiber.Router) {
 	user.Post("/signin", users.SignIn)
 	user.Get("/access-token", users.GetAccessToken)
 }
+
+// func ProfileRoutes(router fiber.Router) {
+// 	router.Get("/profile", users.GetProfile)
+// }

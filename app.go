@@ -13,8 +13,6 @@ func main() {
 	}
 	app := fiber.New(fibreConfig)
 
-	database.ConnectPg()
-
 	// declaration
 	// csrfConfig := csrf.Config{
 	// 	KeyLookup:      "header:X-Csrf-Token",
@@ -32,12 +30,13 @@ func main() {
 	// routes
 	routes.RouteSetup(app)
 
-	// port := config.Config("PORT")
+	port := config.Config("PORT")
 
-	app.Listen(":3000")
+	database.ConnectPg()
+	conErr := app.Listen(":" + port)
 
 	// connection error
-	// if conErr != nil {
-	// 	panic(conErr)
-	// }
+	if conErr != nil {
+		panic(conErr)
+	}
 }

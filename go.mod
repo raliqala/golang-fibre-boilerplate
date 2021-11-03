@@ -36,8 +36,33 @@ require (
 )
 
 require (
+	github.com/antihax/optional v1.0.0 // indirect
+	github.com/aymerick/douceur v0.2.0 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
+	github.com/gobuffalo/flect v0.2.3 // indirect
+	github.com/gobuffalo/github_flavored_markdown v1.1.1 // indirect
+	github.com/gobuffalo/helpers v0.6.3 // indirect
+	github.com/gobuffalo/plush v3.8.3+incompatible // indirect
+	github.com/gobuffalo/tags/v3 v3.1.1 // indirect
+	github.com/gobuffalo/validate/v3 v3.3.0 // indirect
 	github.com/gofiber/utils v0.0.10 // indirect
+	github.com/gofrs/uuid v4.1.0+incompatible // indirect
+	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sendgrid/rest v2.6.5+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.10.3+incompatible // indirect
+	github.com/sendinblue/APIv3-go-library v2.0.0+incompatible // indirect
+	github.com/sergi/go-diff v1.2.0 // indirect
+	github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d // indirect
+	github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e // indirect
+	github.com/xhit/go-simple-mail/v2 v2.10.0 // indirect
+	golang.org/x/net v0.0.0-20211101193420-4a448f8816b3 // indirect
+	golang.org/x/oauth2 v0.0.0-20211028175245-ba495a64dcb5 // indirect
+	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/protobuf v1.25.0 // indirect
 )

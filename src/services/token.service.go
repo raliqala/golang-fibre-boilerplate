@@ -45,17 +45,17 @@ func GenerateAccessClaims(uuid string) (*models.Claims, string) {
 // GenerateRefreshClaims returns refresh_token
 func GenerateRefreshClaims(cl *models.Claims) string {
 	db := database.DB
-	result := db.Where(&models.Claims{
-		StandardClaims: jwt.StandardClaims{
-			Issuer: cl.Issuer,
-		},
-	}).Find(&models.Claims{})
+	// result := db.Where(&models.Claims{
+	// 	StandardClaims: jwt.StandardClaims{
+	// 		Issuer: cl.Issuer,
+	// 	},
+	// }).Find(&models.Claims{})
 
-	if result.RowsAffected > 3 {
-		db.Where(&models.Claims{
-			StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
-		}).Delete(&models.Claims{})
-	}
+	// if result.RowsAffected > 3 {
+	// 	db.Where(&models.Claims{
+	// 		StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
+	// 	}).Delete(&models.Claims{})
+	// }
 
 	t := time.Now()
 	refreshClaim := &models.Claims{

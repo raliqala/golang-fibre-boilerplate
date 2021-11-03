@@ -9,6 +9,11 @@ import (
 
 func RouteSetup(app *fiber.App) {
 	api := app.Group("/api", logger.New())
+
+	// protected := app.Group("/private")
+
+	// protected.Use(middleware.SecureAuth)
 	welcome.Welcome(api)
 	auth.AuthRoutes(api)
+	// auth.ProfileRoutes(protected)
 }
