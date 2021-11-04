@@ -3,9 +3,9 @@ package services
 import (
 	"time"
 
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/database"
-	"github.com/raliqala/safepass_api/src/models"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/database"
+	"github.com/raliqala/golang-fibre-boilerplate/src/models"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
@@ -45,17 +45,6 @@ func GenerateAccessClaims(uuid string) (*models.Claims, string) {
 // GenerateRefreshClaims returns refresh_token
 func GenerateRefreshClaims(cl *models.Claims) string {
 	db := database.DB
-	// result := db.Where(&models.Claims{
-	// 	StandardClaims: jwt.StandardClaims{
-	// 		Issuer: cl.Issuer,
-	// 	},
-	// }).Find(&models.Claims{})
-
-	// if result.RowsAffected > 3 {
-	// 	db.Where(&models.Claims{
-	// 		StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
-	// 	}).Delete(&models.Claims{})
-	// }
 
 	t := time.Now()
 	refreshClaim := &models.Claims{
@@ -137,3 +126,53 @@ func GetAuthCookies(accessToken, refreshToken string) (*fiber.Cookie, *fiber.Coo
 
 	return accessCookie, refreshCookie
 }
+
+// TODO new slate for token management
+
+// generate token
+func GenerateToken(uuid string, subjectType string, timeExp int64) string {
+
+	t := time.Now()
+	claim := &models.Claims{
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    uuid,
+			ExpiresAt: timeExp,
+			Subject:   subjectType,
+			IssuedAt:  t.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		panic(err)
+	}
+
+	return tokenString
+}
+
+func SaveToken(uuid string, subjectType string, timeExp int64, token string) bool {
+	db := database.DB
+
+	t := time.Now()
+	dataClaim := &models.Claims{
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    uuid,
+			ExpiresAt: timeExp,
+			Subject:   subjectType,
+			IssuedAt:  t.Unix(),
+			Audience:  token,
+		},
+	}
+
+	// create a claim on DB
+	if err := db.Create(&dataClaim).Error; err != nil {
+		return false
+	}
+
+	return true
+}
+
+// func VerifyToken(token string, subjectType string, c *fiber.Ctx) error {
+
+// }

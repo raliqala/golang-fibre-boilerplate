@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/raliqala/safepass_api/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 

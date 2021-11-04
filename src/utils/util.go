@@ -22,12 +22,21 @@ func check(e error) {
 	}
 }
 
+func getWorkingDir() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return dir
+}
+
 func LoadTemplates(template_path string) string {
 	var data []byte
 	switch template_path {
 	case "email_validation":
 		{
-			file, err := os.ReadFile("/tmp/dat")
+			file, err := os.ReadFile(getWorkingDir() + "/assets/templates/EmailTemplates.txt")
 			check(err)
 			data = file
 		}

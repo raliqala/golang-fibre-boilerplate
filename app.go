@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/database"
-	"github.com/raliqala/safepass_api/src/routes"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/database"
+	"github.com/raliqala/golang-fibre-boilerplate/src/routes"
 )
 
 func main() {

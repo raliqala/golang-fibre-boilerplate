@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/raliqala/safepass_api/src/controllers/users"
+	"github.com/raliqala/golang-fibre-boilerplate/src/controllers/users"
 )
 
 func AuthRoutes(router fiber.Router) {

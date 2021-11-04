@@ -1,4 +1,4 @@
-module github.com/raliqala/safepass_api
+module github.com/raliqala/golang-fibre-boilerplate
 
 go 1.17
 

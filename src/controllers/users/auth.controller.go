@@ -5,12 +5,12 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/database"
-	"github.com/raliqala/safepass_api/src/helpers"
-	"github.com/raliqala/safepass_api/src/models"
-	"github.com/raliqala/safepass_api/src/services"
-	"github.com/raliqala/safepass_api/src/utils"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/database"
+	"github.com/raliqala/golang-fibre-boilerplate/src/helpers"
+	"github.com/raliqala/golang-fibre-boilerplate/src/models"
+	"github.com/raliqala/golang-fibre-boilerplate/src/services"
+	"github.com/raliqala/golang-fibre-boilerplate/src/utils"
 )
 
 func SignUp(c *fiber.Ctx) error {
@@ -53,26 +53,24 @@ func SignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	helpers.SendEmail(helpers.Payload{
-		To:   data.Email,
-		Name: data.FirstName,
-		Cc:   "",
-		HTMLContent: `<html>
-									<head>
-										<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-									</head>
-									<body>
-										<p>This is the <b>Go gopher</b>.</p>
-									</body>
-								</html>`,
-		Subject: "This is a test subject",
-	})
-
 	// setting up the authorization cookies
 	accessToken, refreshToken := services.GenerateTokens(data.UUID.String())
 	accessCookie, refreshCookie := services.GetAuthCookies(accessToken, refreshToken)
 	c.Cookie(accessCookie)
 	c.Cookie(refreshCookie)
+
+	content := services.EmailVerification(utils.EmailVerification{
+		Username:   data.FirstName,
+		VerifyLink: accessToken,
+	})
+
+	helpers.SendEmail(helpers.Payload{
+		To:          data.Email,
+		Name:        data.FirstName,
+		Cc:          "",
+		HTMLContent: content,
+		Subject:     "Welcome, Please verify your email below",
+	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success":       true,

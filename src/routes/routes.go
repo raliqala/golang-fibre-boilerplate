@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/raliqala/safepass_api/src/routes/auth"
-	"github.com/raliqala/safepass_api/src/routes/welcome"
+	"github.com/raliqala/golang-fibre-boilerplate/src/routes/auth"
+	"github.com/raliqala/golang-fibre-boilerplate/src/routes/welcome"
 )
 
 func RouteSetup(app *fiber.App) {
