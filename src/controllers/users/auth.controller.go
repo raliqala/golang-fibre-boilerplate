@@ -53,15 +53,12 @@ func SignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	// setting up the authorization cookies
-	accessToken, refreshToken := services.GenerateTokens(data.UUID.String())
-	accessCookie, refreshCookie := services.GetAuthCookies(accessToken, refreshToken)
-	c.Cookie(accessCookie)
-	c.Cookie(refreshCookie)
+	// setting up the email verification
+	emailToken := services.GeneralTokens(data.UUID.String(), "verify_email", 24)
 
 	content := services.EmailVerification(utils.EmailVerification{
 		Username:   data.FirstName,
-		VerifyLink: accessToken,
+		VerifyLink: emailToken,
 	})
 
 	helpers.SendEmail(helpers.Payload{
@@ -73,9 +70,8 @@ func SignUp(c *fiber.Ctx) error {
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success":       true,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"success": true,
+		"message": "Congratulations, your account has been successfully created.",
 	})
 }
 
@@ -95,7 +91,7 @@ func SignIn(c *fiber.Ctx) error {
 
 	user := new(models.User)
 
-	if res := db.Where(&models.User{Email: user.Email}).First(user); res.RowsAffected <= 0 {
+	if res := db.Where(&models.User{Email: user.Email, Verified: true}).First(user); res.RowsAffected <= 0 {
 		c.JSON(fiber.Map{
 			"success": false,
 			"error":   "Incorrect credentials",
@@ -110,15 +106,21 @@ func SignIn(c *fiber.Ctx) error {
 	}
 
 	// setting up the authorization cookies
-	accessToken, refreshToken := services.GenerateTokens(user.UUID.String())
+	accessToken, refreshToken, accessTime, refreshTime := services.GenerateTokens(user.UUID.String())
 	accessCookie, refreshCookie := services.GetAuthCookies(accessToken, refreshToken)
 	c.Cookie(accessCookie)
 	c.Cookie(refreshCookie)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success":       true,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"success": true,
+		"access": fiber.Map{
+			"token":  accessToken,
+			"expire": accessTime,
+		},
+		"refresh": fiber.Map{
+			"token":  refreshToken,
+			"expire": refreshTime,
+		},
 	})
 
 }
@@ -143,8 +145,8 @@ func GetAccessToken(c *fiber.Ctx) error {
 		})
 
 	if res := db.Where(
-		"expires_at = ? AND issued_at = ? AND issuer = ? AND ID = ?",
-		refreshClaims.ExpiresAt, refreshClaims.IssuedAt, refreshClaims.Issuer, refreshClaims.ID,
+		"expires_at = ? AND issuer = ? AND audience = ?",
+		refreshClaims.ExpiresAt, refreshClaims.Issuer, refreshToken,
 	).First(&models.Claims{}); res.RowsAffected <= 0 {
 		// no such refresh token exist in the database
 		c.ClearCookie("access_token", "refresh_token")
@@ -179,15 +181,21 @@ func GetAccessToken(c *fiber.Ctx) error {
 		})
 	}
 
-	accessToken, refreshToken := services.GenerateTokens(refreshClaims.Issuer)
+	accessToken, refreshToken, accessTime, refreshTime := services.GenerateTokens(refreshClaims.Issuer)
 	accessCookie, refreshCookie := services.GetAuthCookies(accessToken, refreshToken)
 	c.Cookie(accessCookie)
 	c.Cookie(refreshCookie)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success":       true,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"success": true,
+		"access": fiber.Map{
+			"token":  accessToken,
+			"expire": accessTime,
+		},
+		"refresh": fiber.Map{
+			"token":  refreshToken,
+			"expire": refreshTime,
+		},
 	})
 }
 
