@@ -5,8 +5,8 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/models"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

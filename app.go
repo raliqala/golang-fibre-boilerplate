@@ -2,9 +2,10 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/database"
-	"github.com/raliqala/safepass_api/src/routes"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/database"
+	"github.com/raliqala/golang-fibre-boilerplate/src/routes"
 )
 
 func main() {
@@ -12,6 +13,14 @@ func main() {
 		ServerHeader: config.Config("APP_NAME"),
 	}
 	app := fiber.New(fibreConfig)
+
+	// default routes
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"success": true,
+			"message": "All good here!.. 🚀 ",
+		})
+	})
 
 	// declaration
 	// csrfConfig := csrf.Config{
@@ -23,8 +32,7 @@ func main() {
 	// }
 
 	// app config
-	// app.Use(logger.New())
-	// app.Use(cors.New())
+	app.Use(cors.New())
 	// app.Use(csrf.New(csrfConfig))
 
 	// routes

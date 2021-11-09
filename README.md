@@ -1,2 +1,2 @@
-# safepass_api
-safepass backend
+# golang-fibre-boilerplate
+golang-fibre-boilerplate backend

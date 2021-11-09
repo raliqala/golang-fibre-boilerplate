@@ -4,8 +4,8 @@ package middleware
 import (
 	"time"
 
-	"github.com/raliqala/safepass_api/src/config"
-	"github.com/raliqala/safepass_api/src/models"
+	"github.com/raliqala/golang-fibre-boilerplate/src/config"
+	"github.com/raliqala/golang-fibre-boilerplate/src/models"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
