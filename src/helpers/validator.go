@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -34,18 +35,20 @@ func ValidateInput(dataSet interface{}) (bool, map[string]string) {
 				name = strings.ToLower(err.StructField())
 			}
 
+			fmt.Println(err.Tag())
+
 			switch err.Tag() {
 			case "required":
 				errors[name] = "The " + name + " field is required"
-				break
 
 			case "email":
 				errors[name] = "The " + name + " field must be a valid email"
-				break
+
+			// case "gte":
+			// 	errors[name] = name + " must be greater than 7 charactors"
 
 			default:
-				errors[name] = "The " + name + " is invalid"
-				break
+				errors[name] = "The " + name + " field is invalid"
 			}
 
 		}

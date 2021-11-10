@@ -40,6 +40,13 @@ func LoadTemplates(template_path string) string {
 			check(err)
 			data = file
 		}
+
+	case "forgot_password":
+		{
+			file, err := os.ReadFile(getWorkingDir() + "/assets/templates/ForgotPassword.txt")
+			check(err)
+			data = file
+		}
 	}
 
 	return string(data)

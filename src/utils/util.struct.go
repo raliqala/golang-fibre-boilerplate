@@ -13,7 +13,6 @@ type EmailVerification struct {
 	GreetUseStyle     string `json:"greet_use_style"`
 	Username          string `json:"username"`
 	VerifyLink        string `json:"verify_link"`
-	VerifyShortLink   string `json:"verify_short_link" description`
 	SignatureGreeting string `json:"signature_greeting"`
 	EmailSignature    string `json:"email_signature"`
 }
@@ -37,4 +36,12 @@ type AccessTokens struct {
 type AuthTokensObject struct {
 	Access  AccessTokens  `json:"access"`
 	Refresh RefreshTokens `json:"refresh"`
+}
+
+type ForgotPass struct {
+	Email string `json:"email" validate:"required,email,max=255"`
+}
+
+type ResetPass struct {
+	Password string `json:"password"`
 }
