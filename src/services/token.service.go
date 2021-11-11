@@ -28,7 +28,7 @@ func GenerateTokens(uuid string) (string, string, int64, int64) {
 func GenerateAccessClaims(uuid string) (*models.Claims, string, int64) {
 
 	t := time.Now()
-	accessTime := t.Add(15 * time.Minute).Unix()
+	accessTime := t.Add(60 * time.Minute).Unix()
 
 	claim := &models.Claims{
 		StandardClaims: jwt.StandardClaims{

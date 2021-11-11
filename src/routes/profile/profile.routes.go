@@ -7,4 +7,5 @@ import (
 
 func ProfileRoutes(router fiber.Router) {
 	router.Post("/profile", users.GetProfile)
+	router.Put("/update-password", users.UpdatePassword)
 }

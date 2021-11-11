@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -36,7 +35,6 @@ func SignUp(c *fiber.Ctx) error {
 	}
 
 	if err := passwordvalidator.Validate(data.Password, 60); err != nil {
-		fmt.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error": fiber.Map{
@@ -104,7 +102,7 @@ func SignIn(c *fiber.Ctx) error {
 	}
 
 	if ok, err := helpers.ValidateInput(*data); !ok {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})
@@ -120,7 +118,7 @@ func SignIn(c *fiber.Ctx) error {
 	}
 
 	if ok := utils.CheckPasswordHash(data.Password, user.Password); !ok {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   "Incorrect credentials.",
 		})
