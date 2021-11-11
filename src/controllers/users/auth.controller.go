@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -11,6 +12,7 @@ import (
 	"github.com/raliqala/golang-fibre-boilerplate/src/models"
 	"github.com/raliqala/golang-fibre-boilerplate/src/services"
 	"github.com/raliqala/golang-fibre-boilerplate/src/utils"
+	passwordvalidator "github.com/wagslane/go-password-validator"
 )
 
 func SignUp(c *fiber.Ctx) error {
@@ -22,14 +24,24 @@ func SignUp(c *fiber.Ctx) error {
 	c.BodyParser(data)
 
 	if ok, err := helpers.ValidateInput(*data); !ok {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})
 	}
 
+	if err := passwordvalidator.Validate(data.Password, 60); err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"password": err.Error(),
+			},
+		})
+	}
+
 	if userExists := db.Where(&models.User{Email: data.Email}).First(new(models.User)).RowsAffected; userExists > 0 {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   "Sorry user already exists",
 		})
@@ -37,7 +49,7 @@ func SignUp(c *fiber.Ctx) error {
 
 	hash, err := utils.HashPassword(data.Password)
 	if err != nil {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   err,
 		})
@@ -46,10 +58,9 @@ func SignUp(c *fiber.Ctx) error {
 	data.Password = string(hash)
 
 	if createErr := db.Create(&data).Error; createErr != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"general": "Something went wrong, please try again later. 😕",
-			"errMsg":  createErr.Error(),
 		})
 	}
 
@@ -69,7 +80,7 @@ func SignUp(c *fiber.Ctx) error {
 		Subject:     "Welcome, Please verify your email below",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
 		"message": "Congratulations, your account has been successfully created.",
 	})
@@ -196,20 +207,5 @@ func GetAccessToken(c *fiber.Ctx) error {
 			"token":  refreshToken,
 			"expire": refreshTime,
 		},
-	})
-}
-
-func GetProfile(c *fiber.Ctx) error {
-	db := database.DB
-	id := c.Locals("id")
-
-	u := new(models.User)
-	if res := db.Where("uuid = ?", id).First(&u); res.RowsAffected <= 0 {
-		return c.JSON(fiber.Map{"error": true, "general": "Cannot find the User"})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"data":    u,
 	})
 }
