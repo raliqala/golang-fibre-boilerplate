@@ -200,8 +200,8 @@ func GetAccessToken(c *fiber.Ctx) error {
 	}
 
 	if deleteErr := db.Where(
-		"issuer = ? AND ID = ?",
-		refreshClaims.Issuer, refreshClaims.ID,
+		"issuer = ? AND Audience = ?",
+		refreshClaims.Issuer, refreshToken,
 	).Delete(refreshClaims).Error; deleteErr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
