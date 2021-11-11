@@ -46,7 +46,7 @@ func EmailVerification(c *fiber.Ctx) error {
 	}
 
 	if createErr := db.Model(&user).Where("uuid = ?", results.Data).Update("verified", true).Error; createErr != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"general": "Something went wrong, please try again later. 😕",
 		})
@@ -64,7 +64,12 @@ func ForgotPassword(c *fiber.Ctx) error {
 
 	data := new(utils.ForgotPass)
 
-	c.BodyParser(data)
+	if bodyErr := c.BodyParser(data); bodyErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   bodyErr,
+		})
+	}
 
 	if ok, err := helpers.ValidateInput(*data); !ok {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -112,7 +117,12 @@ func ResetPassword(c *fiber.Ctx) error {
 
 	data := new(utils.ResetPass)
 
-	c.BodyParser(data)
+	if bodyErr := c.BodyParser(data); bodyErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   bodyErr,
+		})
+	}
 
 	response := services.ValidateToken(token)
 
@@ -161,7 +171,7 @@ func ResetPassword(c *fiber.Ctx) error {
 	data.Password = string(hash)
 
 	if createErr := db.Model(&user).Where("uuid = ?", results.Data).Update("password", data.Password).Error; createErr != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"general": "Something went wrong, please try again later. 😕",
 		})

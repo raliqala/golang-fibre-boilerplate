@@ -67,12 +67,12 @@ func GenerateRefreshClaims(cl *models.Claims) (string, int64) {
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaim)
 	refreshTokenString, err := refreshToken.SignedString(jwtKey)
 
-	// create a claim on DB
-	SaveToken(cl.Issuer, "refresh_token", refreshTime, refreshTokenString)
-
 	if err != nil {
 		panic(err)
 	}
+
+	// create a claim on DB
+	SaveToken(cl.Issuer, "refresh_token", refreshTime, refreshTokenString)
 
 	return refreshTokenString, refreshTime
 }
@@ -191,6 +191,10 @@ func ValidateToken(accessToken string) string {
 		return jwtKey, nil
 	})
 
+	if err != nil {
+		return helpers.ErrorHandle()
+	}
+
 	claims := token.Claims.(*jwt.StandardClaims)
 
 	if token.Valid {
@@ -252,7 +256,7 @@ func ValidateToken(accessToken string) string {
 
 // 	if err != nil {
 // 		c.Status(fiber.StatusUnauthorized)
-// 		return c.JSON(fiber.Map{
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 // 			"message": "unauthenticated",
 // 		})
 // 	}

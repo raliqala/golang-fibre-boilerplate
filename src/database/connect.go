@@ -35,7 +35,11 @@ func ConnectPg() {
 	}
 
 	fmt.Println("Running the migrations...")
-	DB.AutoMigrate(&models.User{}, &models.Claims{})
+
+	if migrateErr := DB.AutoMigrate(&models.User{}, &models.Claims{}); migrateErr != nil {
+		fmt.Println("Sorry couldn't migrate'...")
+	}
+
 	fmt.Println("Database connection was successful...")
 
 }

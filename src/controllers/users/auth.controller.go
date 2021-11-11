@@ -21,7 +21,12 @@ func SignUp(c *fiber.Ctx) error {
 
 	data := new(models.User)
 
-	c.BodyParser(data)
+	if bodyErr := c.BodyParser(data); bodyErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   bodyErr,
+		})
+	}
 
 	if ok, err := helpers.ValidateInput(*data); !ok {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -91,7 +96,12 @@ func SignIn(c *fiber.Ctx) error {
 
 	data := new(utils.SignIn)
 
-	c.BodyParser(data)
+	if bodyErr := c.BodyParser(data); bodyErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   bodyErr,
+		})
+	}
 
 	if ok, err := helpers.ValidateInput(*data); !ok {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -103,7 +113,7 @@ func SignIn(c *fiber.Ctx) error {
 	user := new(models.User)
 
 	if res := db.Where(&models.User{Email: user.Email, Verified: true}).First(user); res.RowsAffected <= 0 {
-		c.JSON(fiber.Map{
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   "Incorrect credentials",
 		})
@@ -142,8 +152,12 @@ func GetAccessToken(c *fiber.Ctx) error {
 	db := database.DB
 
 	reToken := new(utils.RefreshToken)
-	if err := c.BodyParser(reToken); err != nil {
-		return c.JSON(fiber.Map{"error": true, "input": "Please review your input"})
+
+	if bodyErr := c.BodyParser(reToken); bodyErr != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"error":   bodyErr,
+		})
 	}
 
 	refreshToken := reToken.RefreshToken
@@ -163,6 +177,7 @@ func GetAccessToken(c *fiber.Ctx) error {
 		c.ClearCookie("access_token", "refresh_token")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"success": false,
+			"message": "Access Denied",
 		})
 	}
 
@@ -172,6 +187,7 @@ func GetAccessToken(c *fiber.Ctx) error {
 			c.ClearCookie("access_token", "refresh_token")
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
+				"message": "Access Denied",
 			})
 		}
 	} else {
@@ -179,6 +195,7 @@ func GetAccessToken(c *fiber.Ctx) error {
 		c.ClearCookie("access_token", "refresh_token")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
+			"message": "Access Denied",
 		})
 	}
 
@@ -186,7 +203,7 @@ func GetAccessToken(c *fiber.Ctx) error {
 		"issuer = ? AND ID = ?",
 		refreshClaims.Issuer, refreshClaims.ID,
 	).Delete(refreshClaims).Error; deleteErr != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error":   "Sorry could not delete claims. 😕",
 		})

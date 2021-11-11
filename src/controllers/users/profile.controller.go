@@ -12,7 +12,7 @@ func GetProfile(c *fiber.Ctx) error {
 
 	u := new(models.User)
 	if res := db.Where("uuid = ?", id).First(&u); res.RowsAffected <= 0 {
-		return c.JSON(fiber.Map{"success": false, "message": "Cannot find the User"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Cannot find the User"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
