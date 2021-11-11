@@ -289,7 +289,7 @@ func ValidateToken(accessToken string) string {
 
 // 	database.DB.Where("id = ?", claims.Issuer).First(&user)
 
-// 	return c.JSON(user)
+// 	return
 // }
 
 func GeneralTokens(uuid string, subject string, timeMultiplier time.Duration) string {
