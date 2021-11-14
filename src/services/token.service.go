@@ -28,7 +28,7 @@ func GenerateTokens(uuid string) (string, string, int64, int64) {
 func GenerateAccessClaims(uuid string) (*models.Claims, string, int64) {
 
 	t := time.Now()
-	accessTime := t.Add(15 * time.Minute).Unix()
+	accessTime := t.Add(60 * time.Minute).Unix()
 
 	claim := &models.Claims{
 		StandardClaims: jwt.StandardClaims{
@@ -50,6 +50,18 @@ func GenerateAccessClaims(uuid string) (*models.Claims, string, int64) {
 
 // GenerateRefreshClaims returns refresh_token
 func GenerateRefreshClaims(cl *models.Claims) (string, int64) {
+
+	db := database.DB
+
+	if result := db.Where(&models.Claims{
+		StandardClaims: jwt.StandardClaims{
+			Issuer: cl.Issuer,
+		},
+	}).Find(&models.Claims{}); result.RowsAffected > 0 {
+		db.Where(&models.Claims{
+			StandardClaims: jwt.StandardClaims{Issuer: cl.Issuer},
+		}).Delete(&models.Claims{})
+	}
 
 	t := time.Now()
 
@@ -75,44 +87,6 @@ func GenerateRefreshClaims(cl *models.Claims) (string, int64) {
 	SaveToken(cl.Issuer, "refresh_token", refreshTime, refreshTokenString)
 
 	return refreshTokenString, refreshTime
-}
-
-// SecureAuth returns a middleware which secures all the private routes
-func SecureAuth() func(*fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-		accessToken := c.Cookies("access_token")
-		claims := new(models.Claims)
-
-		token, err := jwt.ParseWithClaims(accessToken, claims,
-			func(token *jwt.Token) (interface{}, error) {
-				return jwtKey, nil
-			})
-
-		if token.Valid {
-			if claims.ExpiresAt < time.Now().Unix() {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"error":   true,
-					"general": "Token Expired",
-				})
-			}
-		} else if ve, ok := err.(*jwt.ValidationError); ok {
-			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				// this is not even a token, we should delete the cookies here
-				c.ClearCookie("access_token", "refresh_token")
-				return c.SendStatus(fiber.StatusForbidden)
-			} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-				// Token is either expired or not active yet
-				return c.SendStatus(fiber.StatusUnauthorized)
-			} else {
-				// cannot handle this token
-				c.ClearCookie("access_token", "refresh_token")
-				return c.SendStatus(fiber.StatusForbidden)
-			}
-		}
-
-		c.Locals("id", claims.Issuer)
-		return c.Next()
-	}
 }
 
 // GetAuthCookies sends two cookies of type access_token and refresh_token

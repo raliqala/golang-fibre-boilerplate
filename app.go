@@ -22,18 +22,8 @@ func main() {
 		})
 	})
 
-	// declaration
-	// csrfConfig := csrf.Config{
-	// 	KeyLookup:      "header:X-Csrf-Token",
-	// 	CookieName:     "csrf_",
-	// 	CookieSameSite: "Strict",
-	// 	Expiration:     1 * time.Hour,
-	// 	KeyGenerator:   utils.UUIDv4,
-	// }
-
 	// app config
 	app.Use(cors.New())
-	// app.Use(csrf.New(csrfConfig))
 
 	// routes
 	routes.RouteSetup(app)
