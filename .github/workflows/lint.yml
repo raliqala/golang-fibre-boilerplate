@@ -2,8 +2,7 @@ name: Test
 on:
   push:
     branches:
-      - main
-      - dev
+      - testify
   pull_request:
 jobs:
   test:
