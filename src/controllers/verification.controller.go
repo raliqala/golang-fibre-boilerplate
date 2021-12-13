@@ -56,7 +56,6 @@ func EmailVerification(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Your account was successfully verified",
 	})
-
 }
 
 func ForgotPassword(c *fiber.Ctx) error {
@@ -107,7 +106,6 @@ func ForgotPassword(c *fiber.Ctx) error {
 		"success": true,
 		"error":   "If this email exist, you will receive an email with instruction. Please follow them to reset your password",
 	})
-
 }
 
 func ResetPassword(c *fiber.Ctx) error {

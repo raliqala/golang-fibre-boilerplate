@@ -50,5 +50,4 @@ func LoadTemplates(template_path string) string {
 	}
 
 	return string(data)
-
 }

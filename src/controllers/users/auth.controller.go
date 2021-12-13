@@ -15,7 +15,6 @@ import (
 )
 
 func SignUp(c *fiber.Ctx) error {
-
 	db := database.DB
 
 	data := new(models.User)
@@ -141,7 +140,6 @@ func SignIn(c *fiber.Ctx) error {
 			"expire": refreshTime,
 		},
 	})
-
 }
 
 var jwtKey = []byte(config.Config("APP_SECRET"))

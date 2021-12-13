@@ -25,12 +25,10 @@ type Payload struct {
 }
 
 func SendEmail(user Payload) {
-
 	server := mail.NewSMTPClient()
 
 	port := config.Config("SMTP_PORT")
 	smtp_port, err := strconv.Atoi(port)
-
 	if err != nil {
 		log.Println("Sorry db port error: ", err)
 	}
@@ -47,7 +45,6 @@ func SendEmail(user Payload) {
 	server.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	smtpClient, err := server.Connect()
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,5 +75,4 @@ func SendEmail(user Payload) {
 	} else {
 		log.Println("Email Sent")
 	}
-
 }

@@ -100,7 +100,6 @@ func UpdatePassword(c *fiber.Ctx) error {
 	})
 }
 
-//update email
+// update email
 func UpdateEmail() {
-
 }

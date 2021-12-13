@@ -1,5 +1,7 @@
 package utils
 
+import "go.mongodb.org/mongo-driver/mongo"
+
 type SignIn struct {
 	Identity string `json:"identity"`
 	Password string `json:"password"`
@@ -49,4 +51,9 @@ type ResetPass struct {
 type UpdatePassword struct {
 	OldPassword string `json:"old_password" validate:"required"`
 	NewPassword string `json:"new_password" validate:"required"`
+}
+
+type MongoInstance struct {
+	Client *mongo.Client
+	DB     *mongo.Database
 }

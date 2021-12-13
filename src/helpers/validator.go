@@ -9,11 +9,9 @@ import (
 )
 
 func ValidateInput(dataSet interface{}) (bool, map[string]string) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 
 	err := validate.Struct(dataSet)
-
 	if err != nil {
 		// validate syntax error
 		if err, ok := err.(*validator.InvalidValidationError); ok {

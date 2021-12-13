@@ -1,0 +1,9 @@
+tasks:
+  - name: format
+    command: gofumpt -l -w .
+  - name: lint staticcheck
+    command: staticcheck
+  - name: lint func nakedret
+    command: nakedret
+  - name: lint
+    command: golangci-lint run

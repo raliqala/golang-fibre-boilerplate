@@ -26,7 +26,6 @@ func GenerateTokens(uuid string) (string, string, int64, int64) {
 }
 
 func GenerateAccessClaims(uuid string) (*models.Claims, string, int64) {
-
 	t := time.Now()
 	accessTime := t.Add(60 * time.Minute).Unix()
 
@@ -50,7 +49,6 @@ func GenerateAccessClaims(uuid string) (*models.Claims, string, int64) {
 
 // GenerateRefreshClaims returns refresh_token
 func GenerateRefreshClaims(cl *models.Claims) (string, int64) {
-
 	db := database.DB
 
 	if result := db.Where(&models.Claims{
@@ -78,7 +76,6 @@ func GenerateRefreshClaims(cl *models.Claims) (string, int64) {
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaim)
 	refreshTokenString, err := refreshToken.SignedString(jwtKey)
-
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +111,6 @@ func GetAuthCookies(accessToken, refreshToken string) (*fiber.Cookie, *fiber.Coo
 
 // generate token
 func GenerateToken(uuid string, subjectType string, timeExp int64) string {
-
 	t := time.Now()
 	claim := &models.Claims{
 		StandardClaims: jwt.StandardClaims{
@@ -158,13 +154,11 @@ func SaveToken(uuid string, subjectType string, timeExp int64, token string) boo
 
 // For internal verification
 func ValidateToken(accessToken string) string {
-
 	db := database.DB
 
 	token, err := jwt.ParseWithClaims(accessToken, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
 	if err != nil {
 		return helpers.ErrorHandle()
 	}
@@ -218,7 +212,6 @@ func ValidateToken(accessToken string) string {
 	}
 
 	return string(byteArray)
-
 }
 
 // func VerifyToken(c *fiber.Ctx) error {
@@ -267,7 +260,6 @@ func ValidateToken(accessToken string) string {
 // }
 
 func GeneralTokens(uuid string, subject string, timeMultiplier time.Duration) string {
-
 	t := time.Now()
 
 	generalTime := t.Add(timeMultiplier * time.Hour).Unix()

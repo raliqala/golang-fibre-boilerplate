@@ -10,7 +10,7 @@ import (
 )
 
 func Unfold(data string) *utils.Success {
-	var response = &utils.Success{}
+	response := &utils.Success{}
 	err := json.Unmarshal([]byte(data), response)
 	if err != nil {
 		panic(err)
@@ -20,7 +20,7 @@ func Unfold(data string) *utils.Success {
 }
 
 func UnfoldAccess(data string) *utils.AuthTokensObject {
-	var res = &utils.AuthTokensObject{}
+	res := &utils.AuthTokensObject{}
 	err := json.Unmarshal([]byte(data), res)
 	if err != nil {
 		panic(err)
@@ -30,7 +30,6 @@ func UnfoldAccess(data string) *utils.AuthTokensObject {
 }
 
 func ErrorHandle() string {
-
 	ErrorArray := utils.Success{Success: false, Message: "Access Denied", Data: ""}
 
 	byteArray, err := json.Marshal(ErrorArray)
@@ -42,7 +41,6 @@ func ErrorHandle() string {
 }
 
 func ExtractToken(c *fiber.Ctx) string {
-
 	bearToken := c.Get("Authorization")
 
 	// Normally Authorization HTTP header.

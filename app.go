@@ -25,12 +25,14 @@ func main() {
 	// app config
 	app.Use(cors.New())
 
+	port := config.Config("PORT")
+
+	// postgres, mongodb
+	database.DBConnection("postgres")
+
 	// routes
 	routes.RouteSetup(app)
 
-	port := config.Config("PORT")
-
-	database.ConnectPg()
 	conErr := app.Listen(":" + port)
 
 	// connection error
