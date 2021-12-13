@@ -1,30 +1,26 @@
-name: Test
-on:
-  push:
-    branches:
-      - testify
-  pull_request:
+name: "CI-tests"
+on: ["push", "pull_request"]
+
 jobs:
-  test:
+  ci:
+    name: "Run CI"
     strategy:
+      fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+        os: ["windows-latest", "ubuntu-latest", "macOS-latest"]
+        go: ["1.16.x", "1.17.x"]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-
-      - name: install reviewdog (default)
-        uses: ./
-      - run: reviewdog -version
-
-      - name: install reviewdog (nightly)
-        uses: ./
-        with:
-          reviewdog_version: nightly
-      - run: reviewdog -version | grep nightly
-
-      - name: install reviewdog (with reviewdog_version)
-        uses: ./
-        with:
-          reviewdog_version: v0.10.0
-      - run: test "$(reviewdog -version)" = '0.10.0'
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - uses: WillAbides/setup-go-faster@v1.7.0
+      with:
+        go-version: ${{ matrix.go }}
+    - run: "go test ./..."
+    - run: "go vet ./..."
+    - uses: dominikh/staticcheck-action@v1.0.0
+      with:
+        version: "2021.1.1"
+        install-go: false
+        cache-key: ${{ matrix.go }}
